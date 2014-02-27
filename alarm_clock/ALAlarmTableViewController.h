@@ -12,6 +12,7 @@
 @interface ALAlarmTableViewController : UITableViewController <ALNewAlarmViewControllerDelegate>
 
 @property (nonatomic, strong) NSMutableArray *alarmList;
+@property (nonatomic, strong) NSMutableArray *setAlarms; 
 - (IBAction)editAlarmAction:(id)sender;
 - (IBAction)addAlarmAction:(id)sender;
 

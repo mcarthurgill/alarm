@@ -16,6 +16,7 @@
 @implementation ALAlarmTableViewController
 
 @synthesize alarmList;
+@synthesize setAlarms;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -30,6 +31,7 @@
 {
     [super viewDidLoad];
     alarmList = [[NSMutableArray alloc] initWithObjects:@"7:30 AM", nil];
+    setAlarms = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
@@ -58,74 +60,34 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     UISwitch* onSwitch = (UISwitch*)[cell.contentView viewWithTag:2];
-    [onSwitch setOn:NO animated:NO];
     UILabel *alarmLabel = (UILabel*)[cell.contentView viewWithTag:1];
     [alarmLabel setText:[alarmList objectAtIndex:indexPath.row]];
     
-    [cell setTag:indexPath.row];
+    if ([setAlarms containsObject:alarmLabel.text]) {
+        [onSwitch setOn:YES animated:YES];
+    } else {
+        [onSwitch setOn:NO animated:YES];
+    }
     
+    //I multiplied the tag by -1 because I was getting errors
+    [cell.contentView setTag:indexPath.row * -1];
+
     [onSwitch addTarget:self action:@selector(onSwitchChanged:) forControlEvents:UIControlEventValueChanged];
 
     return cell;
 }
 
 - (void) onSwitchChanged:(id)sender {
-    UISwitch* switchControl = sender;
-    NSLog(@"ContentView Tag: %ld", (long)switchControl.superview.tag);
-    NSLog(@"Switch Tag: %ld", (long)switchControl.tag);
-    NSLog( @"The switch is %@", switchControl.on ? @"ON" : @"OFF" );
-
+    UISwitch* switchControl = (UISwitch*)sender;
+    
+    NSString *label = [(UILabel*)[[[switchControl superview] viewWithTag:[[switchControl superview] tag]] viewWithTag:1] text];
+    
+    if (switchControl.on) {
+        [setAlarms addObject:label];
+    } else {
+        [setAlarms removeObject:label];
+    }
 }
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a story board-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-
- */
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 63.0;
