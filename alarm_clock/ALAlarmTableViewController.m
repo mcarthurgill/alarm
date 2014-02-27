@@ -54,17 +54,15 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"index: %ld", (long)indexPath.row);
-    NSLog(@"index: %@", [alarmList objectAtIndex:indexPath.row]);
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     UISwitch* onSwitch = (UISwitch*)[cell.contentView viewWithTag:2];
     [onSwitch setOn:NO animated:NO];
     UILabel *alarmLabel = (UILabel*)[cell.contentView viewWithTag:1];
-    alarmLabel.text = (NSString*)[alarmList objectAtIndex:indexPath.row];
+    [alarmLabel setText:[alarmList objectAtIndex:indexPath.row]];
     
-    [cell.contentView setTag:indexPath.row];
+    [cell setTag:indexPath.row];
     
     [onSwitch addTarget:self action:@selector(onSwitchChanged:) forControlEvents:UIControlEventValueChanged];
 
@@ -130,7 +128,7 @@
  */
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 63.0; 
+    return 63.0;
 }
 
 - (IBAction)addAlarmAction:(id)sender {
@@ -142,8 +140,6 @@
 
 -(void) viewController:(ALNewAlarmViewController *)controller didFinishSettingAlarm:(NSString *)time {
     [alarmList addObject:time];
-    NSLog(@"alarmList: %@", alarmList);
-
     [self.tableView reloadData];
 }
 
