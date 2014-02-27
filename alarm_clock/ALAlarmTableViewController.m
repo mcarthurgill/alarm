@@ -94,6 +94,7 @@
 }
 
 - (IBAction)addAlarmAction:(id)sender {
+    [self turnEditingOff]; 
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ALNewAlarmViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"newAlarmViewController"];
     vc.delegate = self;
@@ -120,47 +121,38 @@
     }
 }
 
-
-// // Override to support conditional editing of the table view.
-// - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-// {
-//     return YES;
-// }
-//
+- (void) turnEditingOff {
+    [self.tableView setEditing:NO animated:YES];
+}
 
 
-// // Override to support editing the table view.
-// - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//     if (editingStyle == UITableViewCellEditingStyleDelete) {
-//         // Delete the row from the data source
-//         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-//         
-//         if ([setAlarms containsObject:<#(id)#>]) {
-//             <#statements#>
-//         }
-//     }
-//     else if (editingStyle == UITableViewCellEditingStyleInsert) {
-//     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-//     }
-// }
-
-
-/*
- // Override to support rearranging the table view.
- - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+ // Override to support conditional editing of the table view.
+ - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
  {
+     return YES;
  }
- */
 
-/*
- // Override to support conditional rearranging of the table view.
- - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the item to be re-orderable.
- return YES;
- }
- */
+
+
+ // Override to support editing the table view.
+ - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle) editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+     if (editingStyle == UITableViewCellEditingStyleDelete) {
+         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+         NSString *time = [(UILabel*)[cell viewWithTag:1] text];
+         
+         if ([setAlarms containsObject:time]) {
+             [setAlarms removeObject:time];
+             [alarmList removeObject:time];
+         } else if ([alarmList containsObject:time]) {
+             [alarmList removeObject:time];
+         }
+         // Delete the row from the data source
+         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+     }
+}
+
+
 
 /*
  #pragma mark - Navigation
