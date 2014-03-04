@@ -35,7 +35,10 @@
         Alarms *alarm = [NSEntityDescription
                          insertNewObjectForEntityForName:@"Alarms"
                          inManagedObjectContext:context];
-        [alarm setValue:@"8:30 A.M." forKey:@"time"];
+        NSNumber *hour = [[NSNumber alloc] initWithInt:8];
+        NSNumber *min = [[NSNumber alloc] initWithInt:30];
+        [alarm setValue:hour forKey:@"hour"];
+        [alarm setValue:min forKey:@"minute"];
         [alarm setValue:user forKey:@"user"];
         NSError *error;
         if (![context save:&error]) {

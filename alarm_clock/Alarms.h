@@ -14,13 +14,15 @@
 @interface Alarms : NSManagedObject
 
 @property (nonatomic, retain) NSNumber * alarm_id;
-@property (nonatomic, retain) NSString * time;
+@property (nonatomic, retain) NSNumber * hour;
+@property (nonatomic, retain) NSNumber * minute;
 @property (nonatomic, retain) NSNumber * user_id;
 @property (nonatomic) NSNumber * on;
 @property (nonatomic, retain) Users *user;
 
 -(NSString *)getTime;
 -(void)turnOn;
--(void)turnOff; 
+-(void)turnOff;
+-(NSNumber *)isOn; 
 
 @end

@@ -33,10 +33,11 @@
 }
 
 - (void)saveAlarm:(id)sender {
-    NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
-    [outputFormatter setDateFormat:@"h:mm a"];
-    NSString *time = [outputFormatter stringFromDate:self.timePicker.date];
-    [self.delegate viewController:self didFinishSettingAlarm:time];
+    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:self.timePicker.date];
+    
+    NSInteger hour= [components hour];
+    NSInteger minute = [components minute];
+    [self.delegate viewController:self didFinishSettingAlarmWithHour:hour andMinute:minute];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

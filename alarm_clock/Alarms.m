@@ -13,13 +13,32 @@
 @implementation Alarms
 
 @dynamic alarm_id;
-@dynamic time;
+@dynamic hour;
+@dynamic minute;
 @dynamic user_id;
 @dynamic user;
 @dynamic on;
 
 -(NSString *)getTime {
-    return self.time; 
+    NSMutableString *time = [[NSMutableString alloc] init];
+    NSString *minutes = [self.minute stringValue];
+    NSNumber *hourNumber = [NSNumber numberWithInt:(int)([self.hour integerValue] - 12)];
+    NSString *hours = [self.hour stringValue];
+    NSString *ending = @" AM";
+    
+    if ([self.hour integerValue] == 0) {
+        [time appendString:@"12"];
+    } else if ([self.hour integerValue] < 11) {
+        [time appendString:hours];
+    } else {
+        [time appendString:[hourNumber stringValue]];
+        ending = @" PM";
+    }
+    
+    [time appendString:@":"];
+    [time appendString:minutes];
+    [time appendString:ending];
+    return time;
 }
 
 -(void)turnOn {
@@ -28,6 +47,10 @@
 
 -(void)turnOff {
     self.on = [NSNumber numberWithBool:NO];
+}
+
+-(NSNumber *)isOn {
+    return self.on;
 }
 
 @end

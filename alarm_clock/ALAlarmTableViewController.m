@@ -46,6 +46,7 @@
     currentUser = (Users *)[users objectAtIndex:0];
     NSSet *alarms = [currentUser getAlarms];
     alarmList = [[NSMutableArray alloc] initWithArray:[alarms allObjects]];
+    //alarmList = [self sortAlarmList];
     setAlarms = [[NSMutableArray alloc] init];
     NSArray *setAlarmObjects = [[NSArray alloc] initWithArray:[currentUser getCurrentlyOnAlarms]];
     for (Alarms *myAlarm in setAlarmObjects) {
@@ -101,14 +102,43 @@
     
     NSString *label = [(UILabel*)[[[switchControl superview] viewWithTag:[[switchControl superview] tag]] viewWithTag:1] text];
     
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    [request setEntity:[NSEntityDescription entityForName:@"Alarms" inManagedObjectContext:managedObjectContext]];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"user_id == %@ && time == %@", currentUser.user_id, label];
-    [request setPredicate:predicate];
+    NSString *hour = [[NSString alloc] init];
+    NSString *min = [[NSString alloc] init];
+    NSString *amOrPm = [[NSString alloc] init];
     
+    NSRange colon = [label rangeOfString:@":"];
+    NSRange space = [label rangeOfString:@" "];
+    
+    hour = [label substringWithRange:NSMakeRange(0, colon.location)];
+    min = [label substringWithRange:NSMakeRange(colon.location + 1, space.location - 1)];
+    amOrPm = [label substringFromIndex:space.location + 1];
+    
+    NSLog(@"hour: %@", hour);
+    NSLog(@"min: %@", min);
+    NSLog(@"am: %@", amOrPm);
+    
+    NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+    [f setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSNumber *hourNumber = [[NSNumber alloc] init];
+    
+    if ([amOrPm isEqualToString: @"PM"]) {
+        NSInteger hourAsInt = [hour integerValue] + 12;
+        hourNumber = [NSNumber numberWithInt:hourAsInt];
+    } else {
+        hourNumber = [f numberFromString:hour];
+    }
+    NSNumber *minNumber = [f numberFromString:min];
+
+    
+      NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"Alarms" inManagedObjectContext:managedObjectContext]];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"user_id == %@ && hour == %@ && minute == %@", currentUser.user_id, hourNumber, minNumber];
+    [request setPredicate:predicate];
+                              
     NSError *error = nil;
     NSArray *results = [managedObjectContext executeFetchRequest:request error:&error];
-
+    
     if ([results count] == 1) {
         if (switchControl.on) {
             [setAlarms addObject:label];
@@ -119,9 +149,11 @@
         }
         if (![managedObjectContext save:&error]) {
             NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
+        } else {
+            NSLog(@"I think I saved");
         }
     } else {
-        NSLog(@"****ahhh we got back too many results in on switch changed******");
+        NSLog(@"****ahhh we got back too many or zero results in on switch changed******");
     }
 }
 
@@ -137,38 +169,39 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
--(void) viewController:(ALNewAlarmViewController *)controller didFinishSettingAlarm:(NSString *)time {
+-(void) viewController:(ALNewAlarmViewController *)controller didFinishSettingAlarmWithHour:(NSInteger *)hour andMinute:(NSInteger *)minute {
     Alarms *newAlarm = [NSEntityDescription
                      insertNewObjectForEntityForName:@"Alarms"
                      inManagedObjectContext:managedObjectContext];
+    
     BOOL match = NO;
     for ( Alarms* myAlarm in alarmList) {
-        if ([[myAlarm getTime] isEqualToString:time]) {
+        if ([myAlarm.hour integerValue] == (int)hour) {
             match = YES;
-            [newAlarm turnOn];
-            NSError *error;
-            if (![managedObjectContext save:&error]) {
-                NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
-            }
+            [myAlarm turnOn];
         }
     }
     
     if (!match) {
-        [newAlarm setValue:time forKey:@"time"];
+        [newAlarm setValue:[NSNumber numberWithInt:(int)hour] forKey:@"hour"];
+        [newAlarm setValue:[NSNumber numberWithInt:(int)minute] forKey:@"minute"];
         [currentUser addAlarmsObject:newAlarm];
         [alarmList addObject:newAlarm];
     }
     
-    [setAlarms addObject:time];
+    NSError *error;
+    if (![managedObjectContext save:&error]) {
+        NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
+    }else {
+        NSLog(@"I think I saved");
+    }
+    
+    [setAlarms addObject:[newAlarm getTime]];
     [self.tableView reloadData];
 }
 
 
 - (IBAction)editAlarmAction:(id)sender {
-     NSArray *setAlarmObjects = [[NSArray alloc] initWithArray:[currentUser getCurrentlyOnAlarms]];
-    NSLog(@"setAlarmObjects: %@", setAlarmObjects);
-    NSLog(@"*******************");
-    NSLog(@"alarmList: %@", alarmList);
     if (self.tableView.editing) {
         [self.tableView setEditing:NO animated:YES];
     }else {
@@ -196,9 +229,36 @@
          UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
          NSString *time = [(UILabel*)[cell viewWithTag:1] text];
          
+         NSString *hour = [[NSString alloc] init];
+         NSString *min = [[NSString alloc] init];
+         NSString *amOrPm = [[NSString alloc] init];
+         
+         NSRange colon = [time rangeOfString:@":"];
+         NSRange space = [time rangeOfString:@" "];
+         
+         hour = [time substringWithRange:NSMakeRange(0, colon.location)];
+         min = [time substringWithRange:NSMakeRange(colon.location + 1, space.location - 1)];
+         amOrPm = [time substringFromIndex:space.location + 1];
+         
+         NSLog(@"hour: %@", hour);
+         NSLog(@"min: %@", min);
+         NSLog(@"am: %@", amOrPm);
+         
+         NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+         [f setNumberStyle:NSNumberFormatterDecimalStyle];
+         NSNumber *hourNumber = [[NSNumber alloc] init];
+         
+         if ([amOrPm isEqualToString: @"PM"]) {
+             NSInteger hourAsInt = [hour integerValue] + 12;
+             hourNumber = [NSNumber numberWithInt:hourAsInt];
+         } else {
+             hourNumber = [f numberFromString:hour];
+         }
+         NSNumber *minNumber = [f numberFromString:min];
+         
          NSFetchRequest *request = [[NSFetchRequest alloc] init];
          [request setEntity:[NSEntityDescription entityForName:@"Alarms" inManagedObjectContext:managedObjectContext]];
-         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"user_id == %@ && time == %@", currentUser.user_id, time];
+         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"user_id == %@ && hour == %@ && minute == %@", currentUser.user_id, hourNumber, minNumber];
          [request setPredicate:predicate];
          
          NSError *error = nil;
@@ -211,24 +271,27 @@
          }
          if (![managedObjectContext save:&error]) {
              NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
+         } else {
+             NSLog(@"I think I saved");
          }
          // Delete the row from the data source
          [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
      }
 }
 
+-(NSMutableArray *)sortAlarmList {
+    NSMutableArray *sortedAlarms = [[NSMutableArray alloc] init];
+//    
+//    NSSortDescriptor *valueDescriptor = [[NSSortDescriptor alloc] initWithKey:@"time" ascending:YES];
+//    NSArray *descriptors = [NSArray arrayWithObject:valueDescriptor];
+//    NSArray *sortedArray = [alarmList sortedArrayUsingDescriptors:descriptors];
+//    
+//    [sortedAlarms addObjectsFromArray:sortedArray];
+//    for (Alarms *alarm in sortedAlarms) {
+////        NSLog(@"time: %@", [alarm getTime]);
+//    }
+    return sortedAlarms;
+}
 
-
-/*
- #pragma mark - Navigation
- 
- // In a story board-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
- {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- 
- */
 
 @end

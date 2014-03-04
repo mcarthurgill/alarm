@@ -11,7 +11,7 @@
 @class ALNewAlarmViewController;
 
 @protocol ALNewAlarmViewControllerDelegate <NSObject>
--(void) viewController:(ALNewAlarmViewController *)controller didFinishSettingAlarm:(NSString *)time;
+-(void) viewController:(ALNewAlarmViewController *)controller didFinishSettingAlarmWithHour:(NSInteger *)hour andMinute:(NSInteger *)minute;
 
 @end
 
