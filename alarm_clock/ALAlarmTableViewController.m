@@ -8,6 +8,7 @@
 
 #import "ALAlarmTableViewController.h"
 #import "ALNewAlarmViewController.h"
+#import "ALAppDelegate.h"
 
 @interface ALAlarmTableViewController ()
 
@@ -17,6 +18,8 @@
 
 @synthesize alarmList;
 @synthesize setAlarms;
+@synthesize managedObjectContext;
+@synthesize currentUser;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -30,8 +33,24 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    alarmList = [[NSMutableArray alloc] initWithObjects:@"7:30 AM", nil];
+    
+    ALAppDelegate *appDelegate = (ALAppDelegate *)[[UIApplication sharedApplication] delegate];
+    self.managedObjectContext = [appDelegate managedObjectContext];
+
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Users" inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    NSError *error;
+    
+    NSArray *users = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    currentUser = (Users *)[users objectAtIndex:0];
+    NSSet *alarms = [currentUser getAlarms];
+    alarmList = [[NSMutableArray alloc] initWithArray:[alarms allObjects]];
     setAlarms = [[NSMutableArray alloc] init];
+    NSArray *setAlarmObjects = [[NSArray alloc] initWithArray:[currentUser getCurrentlyOnAlarms]];
+    for (Alarms *myAlarm in setAlarmObjects) {
+        [setAlarms addObject:[myAlarm getTime]];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -61,8 +80,8 @@
     
     UISwitch* onSwitch = (UISwitch*)[cell.contentView viewWithTag:2];
     UILabel *alarmLabel = (UILabel*)[cell.contentView viewWithTag:1];
-    [alarmLabel setText:[alarmList objectAtIndex:indexPath.row]];
-    
+    [alarmLabel setText:[[alarmList objectAtIndex:indexPath.row] getTime]];
+
     if ([setAlarms containsObject:alarmLabel.text]) {
         [onSwitch setOn:YES animated:YES];
     } else {
@@ -82,10 +101,27 @@
     
     NSString *label = [(UILabel*)[[[switchControl superview] viewWithTag:[[switchControl superview] tag]] viewWithTag:1] text];
     
-    if (switchControl.on) {
-        [setAlarms addObject:label];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"Alarms" inManagedObjectContext:managedObjectContext]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"user_id == %@ && time == %@", currentUser.user_id, label];
+    [request setPredicate:predicate];
+    
+    NSError *error = nil;
+    NSArray *results = [managedObjectContext executeFetchRequest:request error:&error];
+
+    if ([results count] == 1) {
+        if (switchControl.on) {
+            [setAlarms addObject:label];
+            [[results objectAtIndex:0] turnOn];
+        } else {
+            [setAlarms removeObject:label];
+            [[results objectAtIndex:0] turnOff];
+        }
+        if (![managedObjectContext save:&error]) {
+            NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
+        }
     } else {
-        [setAlarms removeObject:label];
+        NSLog(@"****ahhh we got back too many results in on switch changed******");
     }
 }
 
@@ -102,18 +138,37 @@
 }
 
 -(void) viewController:(ALNewAlarmViewController *)controller didFinishSettingAlarm:(NSString *)time {
-    if (![alarmList containsObject:time]) {
-        [alarmList addObject:time];
-        [setAlarms addObject:time];
-    }else {
-        [setAlarms addObject:time];
+    Alarms *newAlarm = [NSEntityDescription
+                     insertNewObjectForEntityForName:@"Alarms"
+                     inManagedObjectContext:managedObjectContext];
+    BOOL match = NO;
+    for ( Alarms* myAlarm in alarmList) {
+        if ([[myAlarm getTime] isEqualToString:time]) {
+            match = YES;
+            [newAlarm turnOn];
+            NSError *error;
+            if (![managedObjectContext save:&error]) {
+                NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
+            }
+        }
     }
-
+    
+    if (!match) {
+        [newAlarm setValue:time forKey:@"time"];
+        [currentUser addAlarmsObject:newAlarm];
+        [alarmList addObject:newAlarm];
+    }
+    
+    [setAlarms addObject:time];
     [self.tableView reloadData];
 }
 
 
 - (IBAction)editAlarmAction:(id)sender {
+     NSArray *setAlarmObjects = [[NSArray alloc] initWithArray:[currentUser getCurrentlyOnAlarms]];
+    NSLog(@"setAlarmObjects: %@", setAlarmObjects);
+    NSLog(@"*******************");
+    NSLog(@"alarmList: %@", alarmList);
     if (self.tableView.editing) {
         [self.tableView setEditing:NO animated:YES];
     }else {
@@ -141,11 +196,21 @@
          UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
          NSString *time = [(UILabel*)[cell viewWithTag:1] text];
          
-         if ([setAlarms containsObject:time]) {
-             [setAlarms removeObject:time];
-             [alarmList removeObject:time];
-         } else if ([alarmList containsObject:time]) {
-             [alarmList removeObject:time];
+         NSFetchRequest *request = [[NSFetchRequest alloc] init];
+         [request setEntity:[NSEntityDescription entityForName:@"Alarms" inManagedObjectContext:managedObjectContext]];
+         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"user_id == %@ && time == %@", currentUser.user_id, time];
+         [request setPredicate:predicate];
+         
+         NSError *error = nil;
+         NSArray *results = [managedObjectContext executeFetchRequest:request error:&error];
+         
+         if ([results count] == 1) {
+            [setAlarms removeObject:time];
+            [alarmList removeObject:[results objectAtIndex:0]];
+            [currentUser removeAlarmsObject:[results objectAtIndex:0]];
+         }
+         if (![managedObjectContext save:&error]) {
+             NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
          }
          // Delete the row from the data source
          [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		760FC97118C3D8CA00AA9E5A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760FC97018C3D8CA00AA9E5A /* CoreData.framework */; };
+		7625355818C12CB000BB19DD /* alarm_clock.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7625355618C12CAF00BB19DD /* alarm_clock.xcdatamodeld */; };
+		7662404818C54D95006118EF /* Users.m in Sources */ = {isa = PBXBuildFile; fileRef = 7662404718C54D95006118EF /* Users.m */; };
+		7662404B18C54D95006118EF /* Alarms.m in Sources */ = {isa = PBXBuildFile; fileRef = 7662404A18C54D95006118EF /* Alarms.m */; };
 		768F1DD618BE55CB006EA08C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 768F1DD518BE55CB006EA08C /* Foundation.framework */; };
 		768F1DD818BE55CB006EA08C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 768F1DD718BE55CB006EA08C /* CoreGraphics.framework */; };
 		768F1DDA18BE55CB006EA08C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 768F1DD918BE55CB006EA08C /* UIKit.framework */; };
@@ -40,6 +44,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		760FC97018C3D8CA00AA9E5A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		7625355718C12CB000BB19DD /* alarm_clock.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = alarm_clock.xcdatamodel; sourceTree = "<group>"; };
+		7662404618C54D95006118EF /* Users.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Users.h; sourceTree = "<group>"; };
+		7662404718C54D95006118EF /* Users.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Users.m; sourceTree = "<group>"; };
+		7662404918C54D95006118EF /* Alarms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alarms.h; sourceTree = "<group>"; };
+		7662404A18C54D95006118EF /* Alarms.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Alarms.m; sourceTree = "<group>"; };
 		768F1DD218BE55CB006EA08C /* alarm_clock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = alarm_clock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		768F1DD518BE55CB006EA08C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		768F1DD718BE55CB006EA08C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -74,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				760FC97118C3D8CA00AA9E5A /* CoreData.framework in Frameworks */,
 				768F1DD818BE55CB006EA08C /* CoreGraphics.framework in Frameworks */,
 				768F1DDA18BE55CB006EA08C /* UIKit.framework in Frameworks */,
 				768F1DD618BE55CB006EA08C /* Foundation.framework in Frameworks */,
@@ -93,6 +104,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7662404C18C54DA5006118EF /* models */ = {
+			isa = PBXGroup;
+			children = (
+				7662404918C54D95006118EF /* Alarms.h */,
+				7662404A18C54D95006118EF /* Alarms.m */,
+				7662404618C54D95006118EF /* Users.h */,
+				7662404718C54D95006118EF /* Users.m */,
+			);
+			name = models;
+			sourceTree = "<group>";
+		};
 		768F1DC918BE55CB006EA08C = {
 			isa = PBXGroup;
 			children = (
@@ -115,6 +137,7 @@
 		768F1DD418BE55CB006EA08C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				760FC97018C3D8CA00AA9E5A /* CoreData.framework */,
 				768F1DD518BE55CB006EA08C /* Foundation.framework */,
 				768F1DD718BE55CB006EA08C /* CoreGraphics.framework */,
 				768F1DD918BE55CB006EA08C /* UIKit.framework */,
@@ -126,6 +149,7 @@
 		768F1DDB18BE55CB006EA08C /* alarm_clock */ = {
 			isa = PBXGroup;
 			children = (
+				7662404C18C54DA5006118EF /* models */,
 				768F1DE418BE55CB006EA08C /* ALAppDelegate.h */,
 				768F1DE518BE55CB006EA08C /* ALAppDelegate.m */,
 				768F1DE718BE55CB006EA08C /* Main.storyboard */,
@@ -135,6 +159,7 @@
 				768F1E1618BE668B006EA08C /* ALAlarmTableViewController.m */,
 				768F1E0E18BE5E71006EA08C /* ALTabBarViewController.h */,
 				768F1E0F18BE5E71006EA08C /* ALTabBarViewController.m */,
+				7625355618C12CAF00BB19DD /* alarm_clock.xcdatamodeld */,
 				768F1DED18BE55CB006EA08C /* Images.xcassets */,
 				768F1DDC18BE55CB006EA08C /* Supporting Files */,
 			);
@@ -276,8 +301,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7625355818C12CB000BB19DD /* alarm_clock.xcdatamodeld in Sources */,
 				768F1E1718BE668B006EA08C /* ALAlarmTableViewController.m in Sources */,
 				768F1E1018BE5E71006EA08C /* ALTabBarViewController.m in Sources */,
+				7662404B18C54D95006118EF /* Alarms.m in Sources */,
+				7662404818C54D95006118EF /* Users.m in Sources */,
 				768F1E1A18BEBC2A006EA08C /* ALNewAlarmViewController.m in Sources */,
 				768F1DE218BE55CB006EA08C /* main.m in Sources */,
 				768F1DE618BE55CB006EA08C /* ALAppDelegate.m in Sources */,
@@ -489,6 +517,7 @@
 				768F1E0618BE55CB006EA08C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		768F1E0718BE55CB006EA08C /* Build configuration list for PBXNativeTarget "alarm_clockTests" */ = {
 			isa = XCConfigurationList;
@@ -497,8 +526,22 @@
 				768F1E0918BE55CB006EA08C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		7625355618C12CAF00BB19DD /* alarm_clock.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				7625355718C12CB000BB19DD /* alarm_clock.xcdatamodel */,
+			);
+			currentVersion = 7625355718C12CB000BB19DD /* alarm_clock.xcdatamodel */;
+			path = alarm_clock.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 768F1DCA18BE55CB006EA08C /* Project object */;
 }
