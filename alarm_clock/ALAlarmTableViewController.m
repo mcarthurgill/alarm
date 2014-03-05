@@ -106,45 +106,16 @@
     NSString *min = [[NSString alloc] init];
     NSString *amOrPm = [[NSString alloc] init];
     
-    NSRange colon = [label rangeOfString:@":"];
-    NSRange space = [label rangeOfString:@" "];
+    hour = [self getHourFromString:label];
+    min = [self getMinFromString:label];
+    amOrPm = [self getAMorPMFromString:label];
     
-    hour = [label substringWithRange:NSMakeRange(0, colon.location)];
-    min = [label substringWithRange:NSMakeRange(colon.location + 1, space.location - 2)];
-    amOrPm = [label substringFromIndex:space.location + 1];
+    NSNumber *hourNumber = [self getHour:hour basedOnAMorPM:amOrPm];
+    NSNumber *minNumber = [self getMinute:min];
     
-    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
-    [f setNumberStyle:NSNumberFormatterDecimalStyle];
-    NSNumber *hourNumber = [[NSNumber alloc] init];
-    
-    if ([hour integerValue] == 12 && [amOrPm isEqualToString:@"AM"]) {
-        hourNumber = [NSNumber numberWithInt:0];
-    } else if ([hour integerValue] == 12) {
-        hourNumber = [NSNumber numberWithInt:12];
-    } else if ([amOrPm isEqualToString: @"PM"]) {
-        NSInteger hourAsInt = [hour integerValue] + 12;
-        hourNumber = [NSNumber numberWithInt:hourAsInt];
-    } else {
-        hourNumber = [f numberFromString:hour];
-    }
-    
-    if ([[min substringToIndex:1] isEqualToString:@"0"]) {
-        min = [min substringFromIndex:1];
-    }
-    
-    NSNumber *minNumber = [f numberFromString:min];
-    
-
-    
-      NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    [request setEntity:[NSEntityDescription entityForName:@"Alarms" inManagedObjectContext:managedObjectContext]];
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"user_id == %@ && hour == %@ && minute == %@", currentUser.user_id, hourNumber, minNumber];
-    [request setPredicate:predicate];
-                              
+    NSArray *results = [self getResultsForAlarmWithHour:hourNumber andMinute:minNumber];
     NSError *error = nil;
-    NSArray *results = [managedObjectContext executeFetchRequest:request error:&error];
-    
+
     if ([results count] == 1) {
         if (switchControl.on) {
             [setAlarms addObject:label];
@@ -161,6 +132,33 @@
     } else {
         NSLog(@"****ahhh we got back too many or zero results in on switch changed******");
     }
+}
+
+-(NSArray *)getResultsForAlarmWithHour:(NSNumber*)hourNumber andMinute:(NSNumber*)minNumber {
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"Alarms" inManagedObjectContext:managedObjectContext]];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"user_id == %@ && hour == %@ && minute == %@", currentUser.user_id, hourNumber, minNumber];
+    [request setPredicate:predicate];
+    
+    NSError *error = nil;
+    return [managedObjectContext executeFetchRequest:request error:&error];
+}
+
+-(NSString *)getHourFromString:(NSString*)string {
+    NSRange colon = [string rangeOfString:@":"];
+    return [string substringWithRange:NSMakeRange(0, colon.location)];
+}
+
+-(NSString *)getMinFromString:(NSString*)string {
+    NSRange space = [string rangeOfString:@" "];
+    NSRange colon = [string rangeOfString:@":"];
+    return [string substringWithRange:NSMakeRange(colon.location + 1, space.location - 2)];
+}
+
+-(NSString *)getAMorPMFromString:(NSString*)string {
+    NSRange space = [string rangeOfString:@" "];
+    return [string substringFromIndex:space.location + 1];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -240,42 +238,15 @@
          NSString *min = [[NSString alloc] init];
          NSString *amOrPm = [[NSString alloc] init];
          
-         NSRange colon = [time rangeOfString:@":"];
-         NSRange space = [time rangeOfString:@" "];
+         hour = [self getHourFromString:time];
+         min = [self getMinFromString:time];
+         amOrPm = [self getAMorPMFromString:time];
          
-         hour = [time substringWithRange:NSMakeRange(0, colon.location)];
-         min = [time substringWithRange:NSMakeRange(colon.location + 1, space.location - 2)];
-         amOrPm = [time substringFromIndex:space.location + 1];
-         
-         NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
-         [f setNumberStyle:NSNumberFormatterDecimalStyle];
-         NSNumber *hourNumber = [[NSNumber alloc] init];
-         
-         if ([hour integerValue] == 12 && [amOrPm isEqualToString:@"AM"]) {
-             hourNumber = [NSNumber numberWithInt:0];
-         } else if ([hour integerValue] == 12) {
-             hourNumber = [NSNumber numberWithInt:12];
-         } else if ([amOrPm isEqualToString: @"PM"]) {
-             NSInteger hourAsInt = [hour integerValue] + 12;
-             hourNumber = [NSNumber numberWithInt:hourAsInt];
-         } else {
-             hourNumber = [f numberFromString:hour];
-         }
-         
-         if ([[min substringToIndex:1] isEqualToString:@"0"]) {
-             min = [min substringFromIndex:1];
-         }
-
-         NSNumber *minNumber = [f numberFromString:min];
-
-         
-         NSFetchRequest *request = [[NSFetchRequest alloc] init];
-         [request setEntity:[NSEntityDescription entityForName:@"Alarms" inManagedObjectContext:managedObjectContext]];
-         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"user_id == %@ && hour == %@ && minute == %@", currentUser.user_id, hourNumber, minNumber];
-         [request setPredicate:predicate];
+         NSNumber *hourNumber = [self getHour:hour basedOnAMorPM:amOrPm];
+         NSNumber *minNumber = [self getMinute:min];
          
          NSError *error = nil;
-         NSArray *results = [managedObjectContext executeFetchRequest:request error:&error];
+         NSArray *results = [self getResultsForAlarmWithHour:hourNumber andMinute:minNumber];
          
          if ([results count] == 1) {
             [setAlarms removeObject:time];
@@ -291,6 +262,32 @@
          [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
      }
 }
+
+-(NSNumber*)getHour:(NSString*)hour basedOnAMorPM:(NSString*)amOrPm {
+    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+    [f setNumberStyle:NSNumberFormatterDecimalStyle];
+
+    if ([hour integerValue] == 12 && [amOrPm isEqualToString:@"AM"]) {
+        return [NSNumber numberWithInt:0];
+    } else if ([hour integerValue] == 12) {
+        return [NSNumber numberWithInt:12];
+    } else if ([amOrPm isEqualToString: @"PM"]) {
+        NSInteger hourAsInt = [hour integerValue] + 12;
+        return [NSNumber numberWithInt:hourAsInt];
+    }
+    return [f numberFromString:hour];
+}
+
+-(NSNumber*)getMinute:(NSString*)min {
+    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+    [f setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    if ([[min substringToIndex:1] isEqualToString:@"0"]) {
+        min = [min substringFromIndex:1];
+    }
+    return [f numberFromString:min];
+}
+
 
 -(NSMutableArray *)sortAlarmList {
     NSMutableArray *sortedAlarms = [[NSMutableArray alloc] init];
