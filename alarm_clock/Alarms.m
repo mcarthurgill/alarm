@@ -28,14 +28,22 @@
     
     if ([self.hour integerValue] == 0) {
         [time appendString:@"12"];
-    } else if ([self.hour integerValue] < 11) {
-        [time appendString:hours];
-    } else {
+    } else if ([self.hour integerValue] > 12) {
         [time appendString:[hourNumber stringValue]];
         ending = @" PM";
+    } else if ([self.hour integerValue] == 12) {
+        [time appendString:hours];
+        ending = @" PM";
+    } else {
+        [time appendString:hours];
     }
     
     [time appendString:@":"];
+
+    if ([self.minute integerValue] < 10) {
+        [time appendString:@"0"];
+    }
+    
     [time appendString:minutes];
     [time appendString:ending];
     return time;

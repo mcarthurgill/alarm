@@ -110,12 +110,8 @@
     NSRange space = [label rangeOfString:@" "];
     
     hour = [label substringWithRange:NSMakeRange(0, colon.location)];
-    min = [label substringWithRange:NSMakeRange(colon.location + 1, space.location - 1)];
+    min = [label substringWithRange:NSMakeRange(colon.location + 1, space.location - 2)];
     amOrPm = [label substringFromIndex:space.location + 1];
-    
-    NSLog(@"hour: %@", hour);
-    NSLog(@"min: %@", min);
-    NSLog(@"am: %@", amOrPm);
     
     NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
     [f setNumberStyle:NSNumberFormatterDecimalStyle];
@@ -176,9 +172,13 @@
     
     BOOL match = NO;
     for ( Alarms* myAlarm in alarmList) {
-        if ([myAlarm.hour integerValue] == (int)hour) {
+        NSLog(@"alarmList alarm: %@ hrs, %@ min", [myAlarm.hour stringValue], [myAlarm.minute stringValue]);
+        NSLog(@"params: %ld hrs, %ld min", (long)hour, (long)minute);
+        if ([myAlarm.hour integerValue] == (int)hour && [myAlarm.minute integerValue] == (int)minute) {
+            NSLog(@"inside bitchez!!!");
             match = YES;
             [myAlarm turnOn];
+            newAlarm = myAlarm; 
         }
     }
     
