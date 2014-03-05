@@ -14,9 +14,10 @@
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="user_id" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <relationship name="alarms" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Alarms" inverseName="user" inverseEntity="Alarms" syncable="YES"/>
+        <relationship name="friend" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Users" inverseName="friend" inverseEntity="Users" syncable="YES"/>
     </entity>
     <elements>
         <element name="Alarms" positionX="-470" positionY="431" width="128" height="133"/>
-        <element name="Users" positionX="-828" positionY="278" width="128" height="118"/>
+        <element name="Users" positionX="-828" positionY="278" width="128" height="133"/>
     </elements>
 </model>

@@ -17,6 +17,8 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * phone;
 @property (nonatomic, retain) NSSet *alarms;
+@property (nonatomic, retain) Users *friend;
+
 @end
 
 @interface Users (CoreDataGeneratedAccessors)

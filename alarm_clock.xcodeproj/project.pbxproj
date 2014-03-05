@@ -31,6 +31,9 @@
 		768F1E1418BE6084006EA08C /* tab_clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 768F1E1318BE6084006EA08C /* tab_clock.png */; };
 		768F1E1718BE668B006EA08C /* ALAlarmTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 768F1E1618BE668B006EA08C /* ALAlarmTableViewController.m */; };
 		768F1E1A18BEBC2A006EA08C /* ALNewAlarmViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 768F1E1918BEBC2A006EA08C /* ALNewAlarmViewController.m */; };
+		76BF392C18C7B5A500C045D5 /* ALContactsSelectorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF392B18C7B5A500C045D5 /* ALContactsSelectorTableViewController.m */; };
+		76BF392F18C7B64200C045D5 /* ALFriendsNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF392E18C7B64200C045D5 /* ALFriendsNavigationController.m */; };
+		76BF393218C7B6C700C045D5 /* ALShowFriendViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76BF393118C7B6C700C045D5 /* ALShowFriendViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +80,12 @@
 		768F1E1618BE668B006EA08C /* ALAlarmTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALAlarmTableViewController.m; sourceTree = "<group>"; };
 		768F1E1818BEBC2A006EA08C /* ALNewAlarmViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALNewAlarmViewController.h; sourceTree = "<group>"; };
 		768F1E1918BEBC2A006EA08C /* ALNewAlarmViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALNewAlarmViewController.m; sourceTree = "<group>"; };
+		76BF392A18C7B5A500C045D5 /* ALContactsSelectorTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALContactsSelectorTableViewController.h; sourceTree = "<group>"; };
+		76BF392B18C7B5A500C045D5 /* ALContactsSelectorTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALContactsSelectorTableViewController.m; sourceTree = "<group>"; };
+		76BF392D18C7B64200C045D5 /* ALFriendsNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALFriendsNavigationController.h; sourceTree = "<group>"; };
+		76BF392E18C7B64200C045D5 /* ALFriendsNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALFriendsNavigationController.m; sourceTree = "<group>"; };
+		76BF393018C7B6C700C045D5 /* ALShowFriendViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALShowFriendViewController.h; sourceTree = "<group>"; };
+		76BF393118C7B6C700C045D5 /* ALShowFriendViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALShowFriendViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,13 +159,11 @@
 			isa = PBXGroup;
 			children = (
 				7662404C18C54DA5006118EF /* models */,
+				76BF392818C7B35100C045D5 /* alarms */,
+				76BF392918C7B57900C045D5 /* friends */,
 				768F1DE418BE55CB006EA08C /* ALAppDelegate.h */,
 				768F1DE518BE55CB006EA08C /* ALAppDelegate.m */,
 				768F1DE718BE55CB006EA08C /* Main.storyboard */,
-				768F1E1818BEBC2A006EA08C /* ALNewAlarmViewController.h */,
-				768F1E1918BEBC2A006EA08C /* ALNewAlarmViewController.m */,
-				768F1E1518BE668B006EA08C /* ALAlarmTableViewController.h */,
-				768F1E1618BE668B006EA08C /* ALAlarmTableViewController.m */,
 				768F1E0E18BE5E71006EA08C /* ALTabBarViewController.h */,
 				768F1E0F18BE5E71006EA08C /* ALTabBarViewController.m */,
 				7625355618C12CAF00BB19DD /* alarm_clock.xcdatamodeld */,
@@ -197,6 +204,30 @@
 				768F1DFD18BE55CB006EA08C /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		76BF392818C7B35100C045D5 /* alarms */ = {
+			isa = PBXGroup;
+			children = (
+				768F1E1518BE668B006EA08C /* ALAlarmTableViewController.h */,
+				768F1E1618BE668B006EA08C /* ALAlarmTableViewController.m */,
+				768F1E1818BEBC2A006EA08C /* ALNewAlarmViewController.h */,
+				768F1E1918BEBC2A006EA08C /* ALNewAlarmViewController.m */,
+			);
+			name = alarms;
+			sourceTree = "<group>";
+		};
+		76BF392918C7B57900C045D5 /* friends */ = {
+			isa = PBXGroup;
+			children = (
+				76BF392D18C7B64200C045D5 /* ALFriendsNavigationController.h */,
+				76BF392E18C7B64200C045D5 /* ALFriendsNavigationController.m */,
+				76BF392A18C7B5A500C045D5 /* ALContactsSelectorTableViewController.h */,
+				76BF392B18C7B5A500C045D5 /* ALContactsSelectorTableViewController.m */,
+				76BF393018C7B6C700C045D5 /* ALShowFriendViewController.h */,
+				76BF393118C7B6C700C045D5 /* ALShowFriendViewController.m */,
+			);
+			name = friends;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -304,11 +335,14 @@
 				7625355818C12CB000BB19DD /* alarm_clock.xcdatamodeld in Sources */,
 				768F1E1718BE668B006EA08C /* ALAlarmTableViewController.m in Sources */,
 				768F1E1018BE5E71006EA08C /* ALTabBarViewController.m in Sources */,
+				76BF392C18C7B5A500C045D5 /* ALContactsSelectorTableViewController.m in Sources */,
 				7662404B18C54D95006118EF /* Alarms.m in Sources */,
 				7662404818C54D95006118EF /* Users.m in Sources */,
 				768F1E1A18BEBC2A006EA08C /* ALNewAlarmViewController.m in Sources */,
 				768F1DE218BE55CB006EA08C /* main.m in Sources */,
+				76BF392F18C7B64200C045D5 /* ALFriendsNavigationController.m in Sources */,
 				768F1DE618BE55CB006EA08C /* ALAppDelegate.m in Sources */,
+				76BF393218C7B6C700C045D5 /* ALShowFriendViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

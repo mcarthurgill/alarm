@@ -17,6 +17,7 @@
 @dynamic name;
 @dynamic phone;
 @dynamic alarms;
+@dynamic friend; 
 
 - (NSSet *)getAlarms {
     return self.alarms; 
