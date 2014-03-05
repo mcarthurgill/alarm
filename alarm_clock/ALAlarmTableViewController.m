@@ -113,17 +113,27 @@
     min = [label substringWithRange:NSMakeRange(colon.location + 1, space.location - 2)];
     amOrPm = [label substringFromIndex:space.location + 1];
     
-    NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
     [f setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *hourNumber = [[NSNumber alloc] init];
     
-    if ([amOrPm isEqualToString: @"PM"]) {
+    if ([hour integerValue] == 12 && [amOrPm isEqualToString:@"AM"]) {
+        hourNumber = [NSNumber numberWithInt:0];
+    } else if ([hour integerValue] == 12) {
+        hourNumber = [NSNumber numberWithInt:12];
+    } else if ([amOrPm isEqualToString: @"PM"]) {
         NSInteger hourAsInt = [hour integerValue] + 12;
         hourNumber = [NSNumber numberWithInt:hourAsInt];
     } else {
         hourNumber = [f numberFromString:hour];
     }
+    
+    if ([[min substringToIndex:1] isEqualToString:@"0"]) {
+        min = [min substringFromIndex:1];
+    }
+    
     NSNumber *minNumber = [f numberFromString:min];
+    
 
     
       NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -172,13 +182,10 @@
     
     BOOL match = NO;
     for ( Alarms* myAlarm in alarmList) {
-        NSLog(@"alarmList alarm: %@ hrs, %@ min", [myAlarm.hour stringValue], [myAlarm.minute stringValue]);
-        NSLog(@"params: %ld hrs, %ld min", (long)hour, (long)minute);
         if ([myAlarm.hour integerValue] == (int)hour && [myAlarm.minute integerValue] == (int)minute) {
-            NSLog(@"inside bitchez!!!");
             match = YES;
             [myAlarm turnOn];
-            newAlarm = myAlarm; 
+            newAlarm = myAlarm;
         }
     }
     
@@ -237,24 +244,30 @@
          NSRange space = [time rangeOfString:@" "];
          
          hour = [time substringWithRange:NSMakeRange(0, colon.location)];
-         min = [time substringWithRange:NSMakeRange(colon.location + 1, space.location - 1)];
+         min = [time substringWithRange:NSMakeRange(colon.location + 1, space.location - 2)];
          amOrPm = [time substringFromIndex:space.location + 1];
          
-         NSLog(@"hour: %@", hour);
-         NSLog(@"min: %@", min);
-         NSLog(@"am: %@", amOrPm);
-         
-         NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+         NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
          [f setNumberStyle:NSNumberFormatterDecimalStyle];
          NSNumber *hourNumber = [[NSNumber alloc] init];
          
-         if ([amOrPm isEqualToString: @"PM"]) {
+         if ([hour integerValue] == 12 && [amOrPm isEqualToString:@"AM"]) {
+             hourNumber = [NSNumber numberWithInt:0];
+         } else if ([hour integerValue] == 12) {
+             hourNumber = [NSNumber numberWithInt:12];
+         } else if ([amOrPm isEqualToString: @"PM"]) {
              NSInteger hourAsInt = [hour integerValue] + 12;
              hourNumber = [NSNumber numberWithInt:hourAsInt];
          } else {
              hourNumber = [f numberFromString:hour];
          }
+         
+         if ([[min substringToIndex:1] isEqualToString:@"0"]) {
+             min = [min substringFromIndex:1];
+         }
+
          NSNumber *minNumber = [f numberFromString:min];
+
          
          NSFetchRequest *request = [[NSFetchRequest alloc] init];
          [request setEntity:[NSEntityDescription entityForName:@"Alarms" inManagedObjectContext:managedObjectContext]];
