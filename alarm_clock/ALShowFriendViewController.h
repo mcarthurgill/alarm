@@ -7,7 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Users.h"
 
 @interface ALShowFriendViewController : UIViewController
+
+@property (nonatomic, strong) Users *currentUser;
+@property (strong, nonatomic) IBOutlet UILabel *friendNameLabel;
+@property (nonatomic,strong) NSManagedObjectContext* managedObjectContext;
 
 @end

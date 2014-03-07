@@ -7,12 +7,17 @@
 //
 
 #import "ALShowFriendViewController.h"
+#import "ALAppDelegate.h"
 
 @interface ALShowFriendViewController ()
 
 @end
 
 @implementation ALShowFriendViewController
+
+@synthesize currentUser;
+@synthesize friendNameLabel;
+@synthesize managedObjectContext;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -27,7 +32,31 @@
 {
     [super viewDidLoad];
     
-	// Do any additional setup after loading the view.
+    ALAppDelegate *appDelegate = (ALAppDelegate *)[[UIApplication sharedApplication] delegate];
+    self.managedObjectContext = [appDelegate managedObjectContext];
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Users" inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    NSError *error;
+    
+    NSArray *users = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    currentUser = (Users *)[users objectAtIndex:0];
+    
+    //create friend
+    Users *friend = [NSEntityDescription
+                     insertNewObjectForEntityForName:@"Users"
+                     inManagedObjectContext:managedObjectContext];
+    [friend setValue:@"Sarah Betack" forKey:@"name"];
+    [friend setValue:@"2038033319" forKey:@"phone"];
+    friend.friend = currentUser;
+    
+    if (![managedObjectContext save:&error]) {
+        NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
+    }
+
+
+    [friendNameLabel setText:currentUser.friend.name];
 }
 
 - (void)didReceiveMemoryWarning
